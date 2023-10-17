@@ -16,7 +16,9 @@ namespace MiniProcurement.Data.Configurations
             builder.HasOne(u => u.Department)
                .WithMany()
                .HasForeignKey(u => u.DepartmentId)
-               .OnDelete(DeleteBehavior.Restrict); 
+               .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasMany(u => u.Roles).WithMany(r => r.Users);
         }
     }
 }

@@ -14,6 +14,9 @@ namespace MiniProcurement.Data.Configurations
                 .Property(r => r.Name)
                 .IsRequired()
                 .HasMaxLength(128);
+
+            builder.HasMany(r => r.Users).WithMany(r => r.Roles);
+
         }
     }
 }
