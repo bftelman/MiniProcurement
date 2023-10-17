@@ -6,6 +6,6 @@ public class PurchaseRequestDocument
 
     public List<PurchaseRequestDocumentItem> PurchaseRequestDocumentItems = new();
 
-    public int DocumentBaseId {  get; set; }
+    public int DocumentBaseId { get; set; }
     public DocumentBase DocumentBase { get; set; } = null!;
 }

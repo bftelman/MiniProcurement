@@ -6,7 +6,7 @@ public class User
     public List<Role>? Roles { get; set; }
     public int? DepartmentId { get; set; }
     public Department? Department { get; set; }
-    public List<DocumentBase>? Documents { get; set;}
+    public List<DocumentBase>? Documents { get; set; }
 
 }
 

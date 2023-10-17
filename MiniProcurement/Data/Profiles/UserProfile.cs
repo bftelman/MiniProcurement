@@ -4,9 +4,10 @@ using MiniProcurement.Data.Entities;
 
 namespace MiniProcurement.Data.Profiles
 {
-    public class UserProfile: Profile
+    public class UserProfile : Profile
     {
-        public UserProfile() {
+        public UserProfile()
+        {
             CreateMap<User, CreateUserDto>();
             CreateMap<CreateUserResponseDto, User>();
             CreateMap<Department, CreateUserDepartmentDto>();

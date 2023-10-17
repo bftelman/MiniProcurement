@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using MiniProcurement.Data.Contexts;
 using MiniProcurement.Services.Concretes;
 using MiniProcurement.Services.Interfaces;
-using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
