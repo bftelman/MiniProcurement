@@ -1,5 +1,4 @@
 ﻿using MiniProcurement.Data.Contracts.Role;
-using MiniProcurement.Data.Entities;
 
 namespace MiniProcurement.Services.Interfaces
 {

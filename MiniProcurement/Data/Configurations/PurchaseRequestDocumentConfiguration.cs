@@ -18,11 +18,6 @@ namespace MiniProcurement.Data.Configurations
                 .HasMany(prdoc => prdoc.PurchaseRequestDocumentItems)
                 .WithOne(prdocitem => prdocitem.PurchaseRequestDocument)
                 .HasForeignKey(prdoc => prdoc.PurchaseRequestDocumentId);
-
-            builder
-                .HasOne(prdoc => prdoc.DocumentBase)
-                .WithMany(docbase => docbase.PurchaseRequests)
-                .HasForeignKey(prdoc => prdoc.DocumentBaseId);
         }
     }
 }

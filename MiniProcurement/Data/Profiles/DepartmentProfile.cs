@@ -8,7 +8,8 @@ namespace MiniProcurement.Data.Profiles
     {
         public DepartmentProfile()
         {
-            CreateMap<Department, CreateDepartmentDto>();
+            CreateMap<CreateDepartmentDto, Department>();
+            CreateMap<Department, GetDepartmentDto>().ForMember(dest => dest.Users, opt => opt.MapFrom(src => src.Users!.Select(u => u.FullName)));
         }
     }
 }

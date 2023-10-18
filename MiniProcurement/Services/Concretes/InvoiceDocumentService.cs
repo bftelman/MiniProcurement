@@ -1,4 +1,4 @@
-﻿using MiniProcurement.Data.Contexts;
+﻿/*using MiniProcurement.Data.Contexts;
 using MiniProcurement.Data.Entities;
 
 namespace MiniProcurement.Services.Concretes
@@ -52,3 +52,4 @@ namespace MiniProcurement.Services.Concretes
     }
 
 }
+*/

@@ -10,8 +10,16 @@ namespace MiniProcurement.Data.Configurations
         {
             builder.Property(docbase => docbase.DocumentNumber).IsRequired();
             builder
-                .HasMany(docbase => docbase.PurchaseRequests)
-                .WithOne(prdoc => prdoc.DocumentBase);
+                .HasOne(docbase => docbase.PurchaseRequest)
+                .WithOne(prdoc => prdoc.DocumentBase)
+                .HasForeignKey<PurchaseRequestDocument>(prdoc => prdoc.DocumentBaseId);
+
+            builder
+                .HasOne(docbase => docbase.InvoiceRequest)
+                .WithOne(invoice => invoice.DocumentBase)
+                .HasForeignKey<InvoiceDocument>(invoice => invoice.DocumentBaseId);
+
+
             builder
                 .HasOne(docbase => docbase.CreatedBy)
                 .WithMany(u => u.Documents)

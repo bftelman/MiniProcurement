@@ -8,7 +8,10 @@ namespace MiniProcurement.Data.Profiles
     {
         public DocumentProfile()
         {
-            CreateMap<DocumentBase, CreateDocumentDto>();
+            CreateMap<CreateDocumentDto, DocumentBase>();
+            CreateMap<DocumentBase, GetDocumentDto>();
+            CreateMap<CreatePurchaseRequestDto, DocumentBase>();
+            CreateMap<CreatePurchaseRequestDto, PurchaseRequestDocument>();
             CreateMap<PurchaseRequestDocumentItem, CreatePurchaseRequestDocumentItemDto>();
         }
     }

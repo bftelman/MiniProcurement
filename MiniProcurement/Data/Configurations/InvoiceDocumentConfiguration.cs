@@ -14,11 +14,6 @@ namespace MiniProcurement.Data.Configurations
                 .ValueGeneratedNever();
 
             builder.Property(inv => inv.PaymentCardNumber).HasMaxLength(16).IsRequired();
-
-            builder
-                   .HasOne(inv => inv.DocumentBase)
-                   .WithMany(docbase => docbase.InvoiceRequests)
-                   .HasForeignKey(prdoc => prdoc.DocumentBaseId);
         }
     }
 }

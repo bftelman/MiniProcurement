@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MiniProcurement.Data.Contexts;
 
@@ -11,9 +12,11 @@ using MiniProcurement.Data.Contexts;
 namespace MiniProcurement.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231018075424_SetNullOnDelete")]
+    partial class SetNullOnDelete
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,7 +33,7 @@ namespace MiniProcurement.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("ManagerUserId")
+                    b.Property<int>("ManagerUserId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -202,7 +205,8 @@ namespace MiniProcurement.Data.Migrations
                     b.HasOne("MiniProcurement.Data.Entities.User", "Manager")
                         .WithMany()
                         .HasForeignKey("ManagerUserId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Manager");
                 });
@@ -221,8 +225,8 @@ namespace MiniProcurement.Data.Migrations
             modelBuilder.Entity("MiniProcurement.Data.Entities.InvoiceDocument", b =>
                 {
                     b.HasOne("MiniProcurement.Data.Entities.DocumentBase", "DocumentBase")
-                        .WithOne("InvoiceRequest")
-                        .HasForeignKey("MiniProcurement.Data.Entities.InvoiceDocument", "DocumentBaseId")
+                        .WithMany("InvoiceRequests")
+                        .HasForeignKey("DocumentBaseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -232,8 +236,8 @@ namespace MiniProcurement.Data.Migrations
             modelBuilder.Entity("MiniProcurement.Data.Entities.PurchaseRequestDocument", b =>
                 {
                     b.HasOne("MiniProcurement.Data.Entities.DocumentBase", "DocumentBase")
-                        .WithOne("PurchaseRequest")
-                        .HasForeignKey("MiniProcurement.Data.Entities.PurchaseRequestDocument", "DocumentBaseId")
+                        .WithMany("PurchaseRequests")
+                        .HasForeignKey("DocumentBaseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -254,7 +258,7 @@ namespace MiniProcurement.Data.Migrations
                     b.HasOne("MiniProcurement.Data.Entities.Department", "Department")
                         .WithMany("Users")
                         .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Department");
                 });
@@ -281,9 +285,9 @@ namespace MiniProcurement.Data.Migrations
 
             modelBuilder.Entity("MiniProcurement.Data.Entities.DocumentBase", b =>
                 {
-                    b.Navigation("InvoiceRequest");
+                    b.Navigation("InvoiceRequests");
 
-                    b.Navigation("PurchaseRequest");
+                    b.Navigation("PurchaseRequests");
                 });
 
             modelBuilder.Entity("MiniProcurement.Data.Entities.PurchaseRequestDocument", b =>

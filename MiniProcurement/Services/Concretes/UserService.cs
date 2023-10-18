@@ -21,6 +21,7 @@ namespace MiniProcurement.Services.Concretes
         public async Task<CreateUserResponseDto> CreateUser(CreateUserDto createUserDto)
         {
             var user = _mapper.Map<User>(createUserDto);
+            user.Roles = new List<Role>();
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
@@ -46,7 +47,9 @@ namespace MiniProcurement.Services.Concretes
 
         public async Task<GetUserDto> GetUserById(int id)
         {
-            var unmappedUser = await _context.Users.FindAsync(id) ?? throw new Exception("User not found. Go drink some water");
+            var unmappedUser = await _context.Users.Include(u => u.Roles)
+                                                   .SingleOrDefaultAsync(u => u.Id == id)
+                                                   ?? throw new Exception("User not found. Go drink some water");
             var user = _mapper.Map<GetUserDto>(unmappedUser);
             return user;
         }

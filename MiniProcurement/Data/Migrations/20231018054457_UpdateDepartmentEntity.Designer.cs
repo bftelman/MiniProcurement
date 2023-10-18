@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MiniProcurement.Data.Contexts;
 
@@ -11,9 +12,11 @@ using MiniProcurement.Data.Contexts;
 namespace MiniProcurement.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231018054457_UpdateDepartmentEntity")]
+    partial class UpdateDepartmentEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,7 +33,7 @@ namespace MiniProcurement.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("ManagerUserId")
+                    b.Property<int>("ManagerUserId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -170,6 +173,9 @@ namespace MiniProcurement.Data.Migrations
                     b.Property<int?>("DepartmentId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("DepartmentId1")
+                        .HasColumnType("int");
+
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -178,6 +184,8 @@ namespace MiniProcurement.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("DepartmentId");
+
+                    b.HasIndex("DepartmentId1");
 
                     b.ToTable("Users");
                 });
@@ -202,7 +210,8 @@ namespace MiniProcurement.Data.Migrations
                     b.HasOne("MiniProcurement.Data.Entities.User", "Manager")
                         .WithMany()
                         .HasForeignKey("ManagerUserId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Manager");
                 });
@@ -221,8 +230,8 @@ namespace MiniProcurement.Data.Migrations
             modelBuilder.Entity("MiniProcurement.Data.Entities.InvoiceDocument", b =>
                 {
                     b.HasOne("MiniProcurement.Data.Entities.DocumentBase", "DocumentBase")
-                        .WithOne("InvoiceRequest")
-                        .HasForeignKey("MiniProcurement.Data.Entities.InvoiceDocument", "DocumentBaseId")
+                        .WithMany("InvoiceRequests")
+                        .HasForeignKey("DocumentBaseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -232,8 +241,8 @@ namespace MiniProcurement.Data.Migrations
             modelBuilder.Entity("MiniProcurement.Data.Entities.PurchaseRequestDocument", b =>
                 {
                     b.HasOne("MiniProcurement.Data.Entities.DocumentBase", "DocumentBase")
-                        .WithOne("PurchaseRequest")
-                        .HasForeignKey("MiniProcurement.Data.Entities.PurchaseRequestDocument", "DocumentBaseId")
+                        .WithMany("PurchaseRequests")
+                        .HasForeignKey("DocumentBaseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -252,9 +261,13 @@ namespace MiniProcurement.Data.Migrations
             modelBuilder.Entity("MiniProcurement.Data.Entities.User", b =>
                 {
                     b.HasOne("MiniProcurement.Data.Entities.Department", "Department")
-                        .WithMany("Users")
+                        .WithMany()
                         .HasForeignKey("DepartmentId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("MiniProcurement.Data.Entities.Department", null)
+                        .WithMany("Users")
+                        .HasForeignKey("DepartmentId1");
 
                     b.Navigation("Department");
                 });
@@ -281,9 +294,9 @@ namespace MiniProcurement.Data.Migrations
 
             modelBuilder.Entity("MiniProcurement.Data.Entities.DocumentBase", b =>
                 {
-                    b.Navigation("InvoiceRequest");
+                    b.Navigation("InvoiceRequests");
 
-                    b.Navigation("PurchaseRequest");
+                    b.Navigation("PurchaseRequests");
                 });
 
             modelBuilder.Entity("MiniProcurement.Data.Entities.PurchaseRequestDocument", b =>

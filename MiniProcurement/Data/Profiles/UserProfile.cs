@@ -10,7 +10,7 @@ namespace MiniProcurement.Data.Profiles
         {
             CreateMap<CreateUserDto, User>();
             CreateMap<User, CreateUserResponseDto>();
-            _ = CreateMap<User, GetUserDto>()
+            CreateMap<User, GetUserDto>()
                 .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => src.Roles!.Select(r => r.Name)));
         }
     }
