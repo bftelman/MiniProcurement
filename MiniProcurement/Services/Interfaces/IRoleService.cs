@@ -1,13 +1,14 @@
-﻿using MiniProcurement.Data.Entities;
+﻿using MiniProcurement.Data.Contracts.Role;
+using MiniProcurement.Data.Entities;
 
 namespace MiniProcurement.Services.Interfaces
 {
     public interface IRoleService
     {
-        Task CreateRole(Role role);
+        Task CreateRole(string roleName);
         Task DeleteRole(int id);
-        Task<List<Role>> GetAllRoles();
+        Task<IEnumerable<GetRoleDto>> GetAllRoles();
         Task<Role> GetRoleById(int id);
-        Task UpdateRole(Role role);
+        Task UpdateRole(int id, string roleName);
     }
 }

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using MiniProcurement.Data.Contexts;
-using MiniProcurement.Data.Contracts;
+using MiniProcurement.Data.Contracts.Document;
 using MiniProcurement.Data.Entities;
 
 namespace MiniProcurement.Services.Concretes

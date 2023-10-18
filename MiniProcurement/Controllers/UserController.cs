@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MiniProcurement.Data.Contracts;
+using MiniProcurement.Data.Contracts.User;
 using MiniProcurement.Services.Interfaces;
 
 namespace MiniProcurement.Controllers
@@ -16,9 +16,9 @@ namespace MiniProcurement.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GetUserDto>>> GetAllUsers()
+        public async Task<IActionResult> GetAllUsers()
         {
-            var result = await _userService.GetAllUsers();
+            var result = await _userService.GetAllUsersAsync();
             return Ok(result);
         }
 
@@ -43,25 +43,25 @@ namespace MiniProcurement.Controllers
             return NoContent();
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateUserName([FromRoute] int id, [FromBody] string fullName)
+        [HttpPut("{id}/update")]
+        public async Task<ActionResult> UpdateUserName([FromRoute] int id, [FromBody] UpdateNameDto updateNameDto)
         {
-            await _userService.UpdateUserName(fullName, id);
+            await _userService.UpdateUserName(updateNameDto, id);
             return NoContent();
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult> AssignRole([FromRoute] int id, [FromBody] string roleName)
+        [HttpPut("{id}/assignRole")]
+        public async Task<ActionResult> AssignRole([FromRoute] int id, [FromBody] AssignRoleToUserDto assignRoleToUserDto)
         {
-            await _userService.AssignRole(roleName, id);
+            await _userService.AssignRole(assignRoleToUserDto, id);
             return NoContent();
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult> AssignDepartment([FromRoute] int id, [FromBody] int departmentId)
+        [HttpPut("{id}/assignDepartment")]
+        public async Task<ActionResult> AssignDepartment([FromRoute] int id, [FromBody] AssignDepartmentToUserDto assignDepartmentToUserDto)
         {
-            await _userService.AssignDepartment(id, departmentId);
-            return NoContent();
+            await _userService.AssignDepartment(id, assignDepartmentToUserDto);
+            return Ok();
         }
     }
 }

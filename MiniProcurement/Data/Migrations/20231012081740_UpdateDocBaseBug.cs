@@ -1,9 +1,8 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace MiniProcurement.Migrations
+namespace MiniProcurement.Data.Migrations
 {
     /// <inheritdoc />
     public partial class UpdateDocBaseBug : Migration

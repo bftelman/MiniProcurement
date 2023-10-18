@@ -3,20 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MiniProcurement.Data.Contexts;
 
 #nullable disable
 
-namespace MiniProcurement.Migrations
+namespace MiniProcurement.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231012081740_UpdateDocBaseBug")]
-    partial class UpdateDocBaseBug
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -185,27 +182,19 @@ namespace MiniProcurement.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("MiniProcurement.Data.Entities.UserRole", b =>
+            modelBuilder.Entity("RoleUser", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("RolesId")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("RoleId")
+                    b.Property<int>("UsersId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.HasKey("RolesId", "UsersId");
 
-                    b.HasKey("Id");
+                    b.HasIndex("UsersId");
 
-                    b.HasIndex("RoleId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserRoles");
+                    b.ToTable("RoleUser");
                 });
 
             modelBuilder.Entity("MiniProcurement.Data.Entities.Department", b =>
@@ -270,23 +259,19 @@ namespace MiniProcurement.Migrations
                     b.Navigation("Department");
                 });
 
-            modelBuilder.Entity("MiniProcurement.Data.Entities.UserRole", b =>
+            modelBuilder.Entity("RoleUser", b =>
                 {
-                    b.HasOne("MiniProcurement.Data.Entities.Role", "Role")
-                        .WithMany("Roles")
-                        .HasForeignKey("RoleId")
+                    b.HasOne("MiniProcurement.Data.Entities.Role", null)
+                        .WithMany()
+                        .HasForeignKey("RolesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MiniProcurement.Data.Entities.User", "User")
-                        .WithMany("Roles")
-                        .HasForeignKey("UserId")
+                    b.HasOne("MiniProcurement.Data.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Role");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("MiniProcurement.Data.Entities.DocumentBase", b =>
@@ -301,16 +286,9 @@ namespace MiniProcurement.Migrations
                     b.Navigation("PurchaseRequestDocumentItems");
                 });
 
-            modelBuilder.Entity("MiniProcurement.Data.Entities.Role", b =>
-                {
-                    b.Navigation("Roles");
-                });
-
             modelBuilder.Entity("MiniProcurement.Data.Entities.User", b =>
                 {
                     b.Navigation("Documents");
-
-                    b.Navigation("Roles");
                 });
 #pragma warning restore 612, 618
         }

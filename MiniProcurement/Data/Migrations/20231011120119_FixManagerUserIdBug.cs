@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace MiniProcurement.Migrations
+namespace MiniProcurement.Data.Migrations
 {
     /// <inheritdoc />
     public partial class FixManagerUserIdBug : Migration

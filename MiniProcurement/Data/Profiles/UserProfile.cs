@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using MiniProcurement.Data.Contracts;
+using MiniProcurement.Data.Contracts.User;
 using MiniProcurement.Data.Entities;
 
 namespace MiniProcurement.Data.Profiles
@@ -8,12 +8,10 @@ namespace MiniProcurement.Data.Profiles
     {
         public UserProfile()
         {
-            CreateMap<User, CreateUserDto>();
-            CreateMap<CreateUserResponseDto, User>();
-            CreateMap<Department, CreateUserDepartmentDto>();
-            CreateMap<DocumentBase, CreateDocumentDto>();
-            CreateMap<PurchaseRequestDocumentItem, CreatePurchaseRequestDocumentItemDto>();
-            CreateMap<User, GetUserDto>();
+            CreateMap<CreateUserDto, User>();
+            CreateMap<User, CreateUserResponseDto>();
+            _ = CreateMap<User, GetUserDto>()
+                .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => src.Roles!.Select(r => r.Name)));
         }
     }
 }

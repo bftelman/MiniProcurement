@@ -9,11 +9,11 @@ using MiniProcurement.Data.Contexts;
 
 #nullable disable
 
-namespace MiniProcurement.Migrations
+namespace MiniProcurement.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231011115416_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20231011120119_FixManagerUserIdBug")]
+    partial class FixManagerUserIdBug
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,7 +34,6 @@ namespace MiniProcurement.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("ManagerUserId")
-                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -118,8 +117,7 @@ namespace MiniProcurement.Migrations
                     b.HasOne("MiniProcurement.Data.Entities.User", "Manager")
                         .WithMany()
                         .HasForeignKey("ManagerUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Manager");
                 });

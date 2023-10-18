@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using MiniProcurement.Data.Contexts;
-using MiniProcurement.Data.Contracts;
+using MiniProcurement.Data.Contracts.Department;
 using MiniProcurement.Data.Entities;
 
 namespace MiniProcurement.Services.Concretes
@@ -28,7 +28,7 @@ namespace MiniProcurement.Services.Concretes
             return user;
         }
 
-        public async Task CreateDepartment(CreateUserDepartmentDto createUserDepartmentDto)
+        public async Task CreateDepartment(CreateDepartmentDto createUserDepartmentDto)
         {
             var department = _mapper.Map<Department>(createUserDepartmentDto);
             _context.Departments.Add(department);

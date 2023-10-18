@@ -9,7 +9,7 @@ using MiniProcurement.Data.Contexts;
 
 #nullable disable
 
-namespace MiniProcurement.Migrations
+namespace MiniProcurement.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20231012073606_AddDocs")]
