@@ -25,10 +25,11 @@ namespace MiniProcurement.Services.Concretes
             return roles;
         }
 
-        public async Task<Role> GetRoleById(int id)
+        public async Task<GetRoleDto> GetRoleById(int id)
         {
             var role = await _context.Roles.FindAsync(id) ?? throw new Exception("Role not found. Please provide a valid id");
-            return role;
+            var mappedRole = _mapper.Map<GetRoleDto>(role);
+            return mappedRole;
         }
 
         public async Task CreateRole(string roleName)

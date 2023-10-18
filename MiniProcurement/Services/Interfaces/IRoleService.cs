@@ -8,7 +8,7 @@ namespace MiniProcurement.Services.Interfaces
         Task CreateRole(string roleName);
         Task DeleteRole(int id);
         Task<IEnumerable<GetRoleDto>> GetAllRoles();
-        Task<Role> GetRoleById(int id);
+        Task<GetRoleDto> GetRoleById(int id);
         Task UpdateRole(int id, string roleName);
     }
 }
