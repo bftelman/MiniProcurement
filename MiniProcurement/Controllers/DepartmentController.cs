@@ -4,9 +4,7 @@ using MiniProcurement.Services.Interfaces;
 
 namespace MiniProcurement.Controllers
 {
-    [ApiController]
-    [Route("api/v1/[controller]")]
-    public class DepartmentController : ControllerBase
+    public class DepartmentController : ApplicationController
     {
 
         private readonly IDepartmentService _departmentService;

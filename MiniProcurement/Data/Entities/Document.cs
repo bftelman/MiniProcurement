@@ -1,6 +1,6 @@
 ﻿namespace MiniProcurement.Data.Entities
 {
-    public class DocumentBase
+    public class Document
     {
         public int Id { get; set; }
         public required string DocumentNumber { get; set; }
@@ -8,7 +8,7 @@
         public int CreatedById { get; set; }
         public User CreatedBy { get; set; } = null!;
 
-        public PurchaseRequestDocument? PurchaseRequest { get; set; }
-        public InvoiceDocument? InvoiceRequest { get; set; }
+        public PurchaseRequest? PurchaseRequest { get; set; }
+        public InvoiceRequest? InvoiceRequest { get; set; }
     }
 }

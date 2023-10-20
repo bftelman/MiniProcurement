@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MiniProcurement.Data.Contexts;
 
@@ -11,9 +12,11 @@ using MiniProcurement.Data.Contexts;
 namespace MiniProcurement.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231019075018_DDodododo")]
+    partial class DDodododo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -88,33 +91,6 @@ namespace MiniProcurement.Data.Migrations
                     b.HasKey("DocumentId");
 
                     b.ToTable("InvoiceRequests");
-                });
-
-            modelBuilder.Entity("MiniProcurement.Data.Entities.InvoiceRequestItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("InvoiceRequestId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ItemId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UnitOfMeasure")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InvoiceRequestId");
-
-                    b.ToTable("InvoiceRequestItems");
                 });
 
             modelBuilder.Entity("MiniProcurement.Data.Entities.PurchaseRequest", b =>
@@ -256,17 +232,6 @@ namespace MiniProcurement.Data.Migrations
                     b.Navigation("Document");
                 });
 
-            modelBuilder.Entity("MiniProcurement.Data.Entities.InvoiceRequestItem", b =>
-                {
-                    b.HasOne("MiniProcurement.Data.Entities.InvoiceRequest", "InvoiceRequest")
-                        .WithMany("InvoiceRequestItems")
-                        .HasForeignKey("InvoiceRequestId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("InvoiceRequest");
-                });
-
             modelBuilder.Entity("MiniProcurement.Data.Entities.PurchaseRequest", b =>
                 {
                     b.HasOne("MiniProcurement.Data.Entities.Document", "Document")
@@ -322,11 +287,6 @@ namespace MiniProcurement.Data.Migrations
                     b.Navigation("InvoiceRequest");
 
                     b.Navigation("PurchaseRequest");
-                });
-
-            modelBuilder.Entity("MiniProcurement.Data.Entities.InvoiceRequest", b =>
-                {
-                    b.Navigation("InvoiceRequestItems");
                 });
 
             modelBuilder.Entity("MiniProcurement.Data.Entities.PurchaseRequest", b =>

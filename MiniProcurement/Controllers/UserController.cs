@@ -4,9 +4,7 @@ using MiniProcurement.Services.Interfaces;
 
 namespace MiniProcurement.Controllers
 {
-    [Route("api/v1/[controller]")]
-    [ApiController]
-    public class UserController : ControllerBase
+    public class UserController : ApplicationController
     {
         private readonly IUserService _userService;
 

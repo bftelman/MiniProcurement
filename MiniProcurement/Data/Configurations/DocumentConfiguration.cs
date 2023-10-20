@@ -4,20 +4,20 @@ using MiniProcurement.Data.Entities;
 
 namespace MiniProcurement.Data.Configurations
 {
-    public class DocumentBaseConfiguration : IEntityTypeConfiguration<DocumentBase>
+    public class DocumentConfiguration : IEntityTypeConfiguration<Document>
     {
-        public void Configure(EntityTypeBuilder<DocumentBase> builder)
+        public void Configure(EntityTypeBuilder<Document> builder)
         {
             builder.Property(docbase => docbase.DocumentNumber).IsRequired();
             builder
                 .HasOne(docbase => docbase.PurchaseRequest)
-                .WithOne(prdoc => prdoc.DocumentBase)
-                .HasForeignKey<PurchaseRequestDocument>(prdoc => prdoc.DocumentBaseId);
+                .WithOne(prdoc => prdoc.Document)
+                .HasForeignKey<PurchaseRequest>(prdoc => prdoc.DocumentId);
 
             builder
                 .HasOne(docbase => docbase.InvoiceRequest)
-                .WithOne(invoice => invoice.DocumentBase)
-                .HasForeignKey<InvoiceDocument>(invoice => invoice.DocumentBaseId);
+                .WithOne(invoice => invoice.Document)
+                .HasForeignKey<InvoiceRequest>(invoice => invoice.DocumentId);
 
 
             builder

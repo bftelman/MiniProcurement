@@ -4,9 +4,9 @@ using MiniProcurement.Data.Entities;
 
 namespace MiniProcurement.Data.Configurations
 {
-    public class PurchaseRequestDocumentItemConfiguration : IEntityTypeConfiguration<PurchaseRequestDocumentItem>
+    public class PurchaseRequestItemConfiguration : IEntityTypeConfiguration<PurchaseRequestItem>
     {
-        public void Configure(EntityTypeBuilder<PurchaseRequestDocumentItem> builder)
+        public void Configure(EntityTypeBuilder<PurchaseRequestItem> builder)
         {
             builder.Property(pri => pri.Price).IsRequired();
             builder.Property(pri => pri.Quantity).IsRequired();

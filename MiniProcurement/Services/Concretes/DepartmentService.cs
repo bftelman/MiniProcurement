@@ -38,7 +38,7 @@ namespace MiniProcurement.Services.Concretes
             var user = await _context.Users.Include(u => u.Roles)
                 .SingleOrDefaultAsync(u => u.Id == department.ManagerUserId) ?? throw new Exception("User not found. Please provide a valid id");
 
-            if (user.Roles.Any(r => r.Name == "MANAGER"))
+            if (user.Roles != null && user.Roles.Any(r => r.Name == "MANAGER"))
             {
                 department.Users = new List<User> { user };
                 _context.Departments.Add(department);

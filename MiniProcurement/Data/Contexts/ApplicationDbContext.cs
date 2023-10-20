@@ -14,10 +14,11 @@ namespace MiniProcurement.Data.Contexts
         public DbSet<User> Users { get; set; }
         public DbSet<Department> Departments { get; set; }
         public DbSet<Role> Roles { get; set; }
-        public DbSet<DocumentBase> Documents { get; set; }
-        public DbSet<PurchaseRequestDocument> PurchaseRequests { get; set; }
-        public DbSet<InvoiceDocument> Invoices { get; set; }
-        public DbSet<PurchaseRequestDocumentItem> PurchaseRequestDocumentItems { get; set; }
+        public DbSet<Document> Documents { get; set; }
+        public DbSet<PurchaseRequest> PurchaseRequests { get; set; }
+        public DbSet<InvoiceRequest> InvoiceRequests { get; set; }
+        public DbSet<PurchaseRequestItem> PurchaseRequestItems { get; set; }
+        public DbSet<InvoiceRequestItem> InvoiceRequestItems { get; set; }
 
         #region Entity configurations
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -25,10 +26,10 @@ namespace MiniProcurement.Data.Contexts
             new UserConfiguration().Configure(modelBuilder.Entity<User>());
             new RoleConfiguration().Configure(modelBuilder.Entity<Role>());
             new DepartmentConfiguration().Configure(modelBuilder.Entity<Department>());
-            new DocumentBaseConfiguration().Configure(modelBuilder.Entity<DocumentBase>());
-            new InvoiceDocumentConfiguration().Configure(modelBuilder.Entity<InvoiceDocument>());
-            new PurchaseRequestDocumentConfiguration().Configure(modelBuilder.Entity<PurchaseRequestDocument>());
-            new PurchaseRequestDocumentItemConfiguration().Configure(modelBuilder.Entity<PurchaseRequestDocumentItem>());
+            new DocumentConfiguration().Configure(modelBuilder.Entity<Document>());
+            new InvoiceRequestConfiguration().Configure(modelBuilder.Entity<InvoiceRequest>());
+            new PurchaseRequestConfiguration().Configure(modelBuilder.Entity<PurchaseRequest>());
+            new PurchaseRequestItemConfiguration().Configure(modelBuilder.Entity<PurchaseRequestItem>());
         }
         #endregion
     }

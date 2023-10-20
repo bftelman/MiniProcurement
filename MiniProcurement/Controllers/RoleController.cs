@@ -5,9 +5,7 @@ using MiniProcurement.Services.Interfaces;
 
 namespace MiniProcurement.Controllers
 {
-    [ApiController]
-    [Route("api/v1/[controller]")]
-    public class RoleController : ControllerBase
+    public class RoleController : ApplicationController
     {
         private readonly IRoleService _roleService;
         public RoleController(IRoleService roleService)
