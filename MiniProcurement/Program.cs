@@ -1,10 +1,18 @@
+using Microsoft.Extensions.Options;
 using MiniProcurement.Extensions;
+using MiniProcurement.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddApplicationServices(builder.Configuration);
 
 var app = builder.Build();
+
+var locOptions = app.Services.GetService<IOptions<RequestLocalizationOptions>>();
+app.UseRequestLocalization(locOptions.Value);
+
+app.UseMiddleware<ExceptionMiddleware>();
+
 
 if (app.Environment.IsDevelopment())
 {

@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using MiniProcurement.Data.Contexts;
 using MiniProcurement.Data.Contracts.InvoiceRequest;
 using MiniProcurement.Data.Entities;
 using MiniProcurement.Data.Enumerations;
+using MiniProcurement.Exceptions;
+using MiniProcurement.Resources.Localization;
 using MiniProcurement.Services.Interfaces;
 
 namespace MiniProcurement.Services.Concretes
@@ -12,17 +15,20 @@ namespace MiniProcurement.Services.Concretes
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
-        public InvoiceRequestService(ApplicationDbContext context, IMapper mapper)
+        private readonly IStringLocalizer<ExceptionLoc> _localizer;
+
+        public InvoiceRequestService(ApplicationDbContext context, IMapper mapper, IStringLocalizer<ExceptionLoc> localizer)
         {
             _context = context;
             _mapper = mapper;
+            _localizer = localizer;
         }
 
 
         public async Task CreateInvoiceRequest(CreateInvoiceDto createInvoiceDto)
         {
             var user = await _context.Users.Include(u => u.Roles).FirstOrDefaultAsync(u => u.Id == createInvoiceDto.CreatedById)
-                           ?? throw new Exception("User not found. Please provide a valid id");
+                           ?? throw new NotFoundException(_localizer["UserNotFound"]);
 
             if (user.Roles != null && user.Roles.Any(r => r.Name == "USER_SUPPLY"))
             {
@@ -37,7 +43,7 @@ namespace MiniProcurement.Services.Concretes
             }
             else
             {
-                throw new Exception("User doesn't have permissions to create a purchase request");
+                throw new NotAuthorizedException(_localizer["NoInvoiceRights"]);
             }
         }
 
@@ -47,7 +53,7 @@ namespace MiniProcurement.Services.Concretes
             var invoice = await _context.InvoiceRequests
                                         .Include(inv => inv.InvoiceRequestItems)
                                         .FirstOrDefaultAsync(item => item.DocumentId == id)
-                                        ?? throw new Exception("Invoice not found. Please provide a valid id");
+                                        ?? throw new NotFoundException(_localizer["InvNotFound"]);
             var item = _mapper.Map<InvoiceRequestItem>(createInvoiceItemDto);
             _context.InvoiceRequestItems.Add(item);
             if (invoice.InvoiceRequestItems == null)
@@ -68,12 +74,12 @@ namespace MiniProcurement.Services.Concretes
             var invoiceRequest = await _context.InvoiceRequests
                                                .Include(inv => inv.InvoiceRequestItems)
                                                .FirstOrDefaultAsync(inv => inv.DocumentId == invoiceId)
-                                               ?? throw new Exception("Invoice not found. Please provide a valid id");
+                                               ?? throw new NotFoundException(_localizer["InvNotFound"]);
 
             var purchaseRequest = await _context.PurchaseRequests
                                                 .Include(pr => pr.PurchaseRequestItems)
                                                 .FirstOrDefaultAsync(pr => pr.DocumentId == purchaseRequestId)
-                                                ?? throw new Exception("Purchase request not found. Please provide a valid id");
+                                                ?? throw new NotFoundException(_localizer["PrNotFound"]);
 
             foreach (var item in invoiceRequest.InvoiceRequestItems)
             {
@@ -81,14 +87,14 @@ namespace MiniProcurement.Services.Concretes
 
                 if (correspondingPurchaseItem == null)
                 {
-                    throw new Exception("Corresponding purchase item not found for the invoice item");
+                    throw new NotFoundException(_localizer["PrInvNotFound"]);
                 }
 
                 var remainingQuantity = correspondingPurchaseItem.Quantity - item.Quantity;
 
                 if (remainingQuantity < 0)
                 {
-                    throw new Exception("Trying to sell more quantity than available in the purchase request");
+                    throw new Exception(_localizer["NotEnoughItems"]);
                 }
 
                 correspondingPurchaseItem.Quantity = remainingQuantity;
@@ -118,9 +124,9 @@ namespace MiniProcurement.Services.Concretes
             var invoiceRequest = await _context.InvoiceRequests
                                               .Include(inv => inv.InvoiceRequestItems)
                                               .FirstOrDefaultAsync(inv => inv.DocumentId == id)
-                                              ?? throw new Exception("Invoice not found. Please provide a valid id");
+                                              ?? throw new NotFoundException(_localizer["InvNotFound"]);
             var item = invoiceRequest.InvoiceRequestItems.FirstOrDefault(item => item.Id == itemId)
-                                                         ?? throw new Exception("Invoice item not found please provide a valid id");
+                                                         ?? throw new NotFoundException(_localizer["InvItemNotFound"]);
             _mapper.Map(updateInvoiceItemDto, item);
             await _context.SaveChangesAsync();
         }
@@ -130,9 +136,9 @@ namespace MiniProcurement.Services.Concretes
             var invoiceRequest = await _context.InvoiceRequests
                                              .Include(inv => inv.InvoiceRequestItems)
                                              .FirstOrDefaultAsync(inv => inv.DocumentId == id)
-                                             ?? throw new Exception("Invoice not found. Please provide a valid id");
+                                             ?? throw new NotFoundException(_localizer["InvNotFound"]);
             var item = invoiceRequest.InvoiceRequestItems.FirstOrDefault(item => item.Id == itemId)
-                                                         ?? throw new Exception("Invoice item not found please provide a valid id");
+                                                         ?? throw new NotFoundException(_localizer["InvItemNotFound"]);
             _context.InvoiceRequestItems.Remove(item);
         }
 
@@ -141,13 +147,13 @@ namespace MiniProcurement.Services.Concretes
             var invoiceRequest = await _context.InvoiceRequests
                                              .Include(inv => inv.InvoiceRequestItems)
                                              .FirstOrDefaultAsync(inv => inv.DocumentId == id)
-                                             ?? throw new Exception("Invoice not found. Please provide a valid id");
+                                             ?? throw new NotFoundException(_localizer["InvNotFound"]);
             _context.InvoiceRequests.Remove(invoiceRequest);
         }
 
         public async Task UpdateInvoice(int id, UpdateInvoiceDto updateInvoiceDto)
         {
-            var invoice = await _context.Departments.FindAsync(id) ?? throw new Exception("Invoice not found. Please provide a valid id");
+            var invoice = await _context.Departments.FindAsync(id) ?? throw new NotFoundException(_localizer["InvNotFound"]);
             _mapper.Map(updateInvoiceDto, invoice);
             await _context.SaveChangesAsync();
         }

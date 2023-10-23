@@ -14,7 +14,7 @@ namespace MiniProcurement.Data.Profiles
             CreateMap<CreateInvoiceDto, Document>();
             CreateMap<CreateInvoiceDto, InvoiceRequest>();
             CreateMap<CreatePurchaseRequestDto, PurchaseRequest>();
-            CreateMap<CreatePurchaseRequestItemDto, PurchaseRequestItem>();
+            CreateMap<CreatePurchaseRequestItemDto, PurchaseRequestItem>(); 
             CreateMap<PurchaseRequestItem, GetPurchaseRequestItemDto>();
             CreateMap<PurchaseRequest, GetPurchaseRequestDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.DocumentId))
@@ -25,8 +25,8 @@ namespace MiniProcurement.Data.Profiles
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.DocumentId));
             CreateMap<CreateInvoiceItemDto, InvoiceRequestItem>();
 
-            CreateMap<UpdateInvoiceDto, InvoiceRequest>().ForMember(dest => dest.Document.CreatedOn, opt => opt.MapFrom(src => src.UpdatedOn));
-            CreateMap<UpdatePurchaseRequestDto, PurchaseRequest>().ForMember(dest => dest.Document.CreatedOn, opt => opt.MapFrom(src => src.UpdatedOn));
+            CreateMap<UpdateInvoiceDto, InvoiceRequest>().ForPath(dest => dest.Document.CreatedOn, opt => opt.MapFrom(src => src.UpdatedOn));
+            CreateMap<UpdatePurchaseRequestDto, PurchaseRequest>().ForPath(dest => dest.Document.CreatedOn, opt => opt.MapFrom(src => src.UpdatedOn));
             CreateMap<UpdatePurchaseRequestItemDto, PurchaseRequestItem>();
             CreateMap<UpdateInvoiceItemDto, InvoiceRequestItem>();
 

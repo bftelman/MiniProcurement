@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using MiniProcurement.Data.Contexts;
 using MiniProcurement.Data.Contracts.PurchaseRequest;
 using MiniProcurement.Data.Entities;
+using MiniProcurement.Exceptions;
+using MiniProcurement.Resources.Localization;
 using MiniProcurement.Services.Interfaces;
 
 namespace MiniProcurement.Services.Concretes
@@ -11,17 +14,20 @@ namespace MiniProcurement.Services.Concretes
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IStringLocalizer<ExceptionLoc> _localizer;
 
-        public PurchaseRequestService(IMapper mapper, ApplicationDbContext context)
+
+        public PurchaseRequestService(IMapper mapper, ApplicationDbContext context, IStringLocalizer<ExceptionLoc> localizer)
         {
             _mapper = mapper;
             _context = context;
+            _localizer = localizer;
         }
 
         public async Task CreatePurchaseRequest(CreatePurchaseRequestDto createPurchaseRequestDto)
         {
             var user = await _context.Users.Include(u => u.Roles).FirstOrDefaultAsync(u => u.Id == createPurchaseRequestDto.CreatedById)
-                                     ?? throw new Exception("User not found. Please provide a valid id");
+                                     ?? throw new NotFoundException(_localizer["UserNotFound"]);
 
             if (user.Roles != null && user.Roles.Any(r => r.Name == "USER_DEMAND"))
             {
@@ -36,7 +42,7 @@ namespace MiniProcurement.Services.Concretes
             }
             else
             {
-                throw new Exception("User doesn't have permissions to create a purchase request");
+                throw new NotAuthorizedException(_localizer["NoPrRights"]);
             }
         }
 
@@ -45,14 +51,14 @@ namespace MiniProcurement.Services.Concretes
             var res = await _context.PurchaseRequests
                                                 .Include(prdoc => prdoc.Document)
                                                 .FirstOrDefaultAsync(prdoc => prdoc.DocumentId == id)
-                                                ?? throw new Exception("Purchase request not found");
+                                                ?? throw new NotFoundException(_localizer["PrNotFound"]);
             var purchaseRequest = _mapper.Map<GetPurchaseRequestDto>(res);
             return purchaseRequest;
         }
 
         public async Task UpdatePurchaseRequest(int id, UpdatePurchaseRequestDto updatePurchaseRequestDto)
         {
-            var pr = await _context.Departments.FindAsync(id) ?? throw new Exception("Purchase request not found. Please provide a valid id");
+            var pr = await _context.Departments.FindAsync(id) ?? throw new NotFoundException(_localizer["PrNotFound"]);
             _mapper.Map(updatePurchaseRequestDto, pr);
             await _context.SaveChangesAsync();
         }
@@ -76,7 +82,7 @@ namespace MiniProcurement.Services.Concretes
         public async Task AddPurchaseRequestItem(int id, CreatePurchaseRequestItemDto createPurchaseRequestItemDto)
         {
             var prItem = _mapper.Map<PurchaseRequestItem>(createPurchaseRequestItemDto);
-            var pr = await _context.PurchaseRequests.FindAsync(id) ?? throw new Exception("Purchase request not found. Please provide a valid id.");
+            var pr = await _context.PurchaseRequests.FindAsync(id) ?? throw new NotFoundException(_localizer["PrNotFound"]);
 
 
             if (pr.PurchaseRequestItems == null)
@@ -113,7 +119,7 @@ namespace MiniProcurement.Services.Concretes
             var prItem = await _context.PurchaseRequestItems
                                        .Where(prItem => prItem.PurchaseRequestId == id)
                                        .FirstOrDefaultAsync(item => item.Id == itemId)
-                                       ?? throw new Exception("Purchase request item not found. Please provide a valid id");
+                                       ?? throw new NotFoundException(_localizer["PrItemNotFound"]);
 
             _context.PurchaseRequestItems.Remove(prItem);
             await _context.SaveChangesAsync();
@@ -124,7 +130,7 @@ namespace MiniProcurement.Services.Concretes
             var prItem = await _context.PurchaseRequestItems
                                        .Where(prItem => prItem.PurchaseRequestId == id)
                                        .FirstOrDefaultAsync(item => item.Id == itemId)
-                                       ?? throw new Exception("Purchase request item not found. Please provide a valid id");
+                                       ?? throw new NotFoundException(_localizer["PrItemNotFound"]);
 
             _mapper.Map(updatePurchaseDocumentItem, prItem);
             await _context.SaveChangesAsync();

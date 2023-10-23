@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using MiniProcurement.Data.Contexts;
 using MiniProcurement.Data.Contracts.User;
 using MiniProcurement.Data.Entities;
+using MiniProcurement.Exceptions;
+using MiniProcurement.Resources.Localization;
 using MiniProcurement.Services.Interfaces;
 
 namespace MiniProcurement.Services.Concretes
@@ -11,11 +14,13 @@ namespace MiniProcurement.Services.Concretes
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IStringLocalizer<ExceptionLoc> _localizer;
 
-        public UserService(ApplicationDbContext context, IMapper mapper)
+        public UserService(ApplicationDbContext context, IMapper mapper, IStringLocalizer<Resources.Localization.ExceptionLoc> localizer)
         {
             _context = context;
             _mapper = mapper;
+            _localizer = localizer;
         }
 
         public async Task<CreateUserResponseDto> CreateUser(CreateUserDto createUserDto)
@@ -30,7 +35,7 @@ namespace MiniProcurement.Services.Concretes
 
         public async Task DeleteUser(int id)
         {
-            var user = await _context.Users.FindAsync(id) ?? throw new Exception("User not found. Please provide a valid id");
+            var user = await _context.Users.FindAsync(id) ?? throw new NotFoundException(_localizer["UserNotFound"]);
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
         }
@@ -49,7 +54,7 @@ namespace MiniProcurement.Services.Concretes
         {
             var unmappedUser = await _context.Users.Include(u => u.Roles)
                                                    .SingleOrDefaultAsync(u => u.Id == id)
-                                                   ?? throw new Exception("User not found. Go drink some water");
+                                                   ?? throw new NotFoundException(_localizer["UserNotFound"]);
             var user = _mapper.Map<GetUserDto>(unmappedUser);
             return user;
         }
@@ -59,18 +64,18 @@ namespace MiniProcurement.Services.Concretes
             var user = await _context.Users.Include(u => u.Roles)
                                            .FirstOrDefaultAsync(u => u.Id == id)
 
-                                           ?? throw new Exception("User not found. Please provide a valid id");
+                                           ?? throw new NotFoundException(_localizer["UserNotFound"]);
 
             if (user.Roles!.Any(r => r.Name.ToLower() == assignRoleToUserDto.Name.ToLower()))
             {
-                throw new Exception("User already has this role. Please provide a different role or remove this one");
+                throw new ResourceExistsException(_localizer["UserHasRole"]);
             }
 
             var role = await _context.Roles.FirstOrDefaultAsync(r => r.Name == assignRoleToUserDto.Name);
 
             if (role is null)
             {
-                throw new Exception("Role not found");
+                throw new NotFoundException(_localizer["RoleNotFound"]);
             }
 
             user.Roles!.Add(role);
@@ -81,23 +86,17 @@ namespace MiniProcurement.Services.Concretes
         public async Task UpdateUserName(UpdateNameDto updateNameDto, int id)
         {
             var user = await _context.Users.FindAsync(id)
-                ?? throw new Exception("User not found. Please provide a valid id");
+                ?? throw new NotFoundException(_localizer["UserNotFound"]);
             user.FullName = updateNameDto.FullName;
             await _context.SaveChangesAsync();
         }
 
         public async Task AssignDepartment(int userId, AssignDepartmentToUserDto assignDepartmentToUserDto)
         {
-            var user = await _context.Users.FindAsync(userId);
-
-            if (user == null)
-                throw new Exception("User not found. Please provide a valid user id.");
-
-            var department = await _context.Departments.FindAsync(assignDepartmentToUserDto.DepartmentId);
-
-            if (department == null)
-                throw new Exception("Department not found. Please provide a valid department id.");
-
+            var user = await _context.Users.FindAsync(userId)
+                                           ?? throw new NotFoundException(_localizer["UserNotFound"]);
+            var department = await _context.Departments.FindAsync(assignDepartmentToUserDto.DepartmentId)
+                                                       ?? throw new NotFoundException(_localizer["DepartmentNotFound"]);
             user.DepartmentId = department.Id;
 
             await _context.SaveChangesAsync();

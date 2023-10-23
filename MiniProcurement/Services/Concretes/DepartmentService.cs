@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using MiniProcurement.Data.Contexts;
 using MiniProcurement.Data.Contracts.Department;
 using MiniProcurement.Data.Entities;
+using MiniProcurement.Exceptions;
+using MiniProcurement.Resources.Localization;
 using MiniProcurement.Services.Interfaces;
 
 namespace MiniProcurement.Services.Concretes
@@ -11,11 +14,14 @@ namespace MiniProcurement.Services.Concretes
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IStringLocalizer<ExceptionLoc> _localizer;
 
-        public DepartmentService(ApplicationDbContext context, IMapper mapper)
+
+        public DepartmentService(ApplicationDbContext context, IMapper mapper, IStringLocalizer<ExceptionLoc> localizer)
         {
             _context = context;
             _mapper = mapper;
+            _localizer = localizer;
         }
 
         public async Task<IEnumerable<GetDepartmentDto>> GetAllDepartments()
@@ -27,7 +33,7 @@ namespace MiniProcurement.Services.Concretes
 
         public async Task<GetDepartmentDto> GetDepartmentById(int id)
         {
-            var unmappedDep = await _context.Departments.FindAsync(id) ?? throw new Exception("Department not found. Please provide a valid id");
+            var unmappedDep = await _context.Departments.FindAsync(id) ?? throw new NotFoundException(_localizer["DepartmentNotFound"]);
             var mappedDep = _mapper.Map<GetDepartmentDto>(unmappedDep);
             return mappedDep;
         }
@@ -36,7 +42,7 @@ namespace MiniProcurement.Services.Concretes
         {
             var department = _mapper.Map<Department>(createUserDepartmentDto);
             var user = await _context.Users.Include(u => u.Roles)
-                .SingleOrDefaultAsync(u => u.Id == department.ManagerUserId) ?? throw new Exception("User not found. Please provide a valid id");
+                .SingleOrDefaultAsync(u => u.Id == department.ManagerUserId) ?? throw new NotFoundException(_localizer["UserNotFound"]);
 
             if (user.Roles != null && user.Roles.Any(r => r.Name == "MANAGER"))
             {
@@ -46,7 +52,7 @@ namespace MiniProcurement.Services.Concretes
             }
             else
             {
-                throw new Exception("Can't set current user as manager. Cause: User doesn't have Manager rights.");
+                throw new NotAuthorizedException(_localizer["NoManagerRights"]);
             }
 
 
@@ -54,7 +60,7 @@ namespace MiniProcurement.Services.Concretes
 
         public async Task UpdateDepartment(int id, UpdateDepartmentDto updateDepartmentDto)
         {
-            var department = await _context.Departments.FindAsync(id) ?? throw new Exception("Department not found. Please provide a valid id");
+            var department = await _context.Departments.FindAsync(id) ?? throw new NotFoundException(_localizer["DepartmentNotFound"]);
             _mapper.Map(updateDepartmentDto, department);
             await _context.SaveChangesAsync();
         }

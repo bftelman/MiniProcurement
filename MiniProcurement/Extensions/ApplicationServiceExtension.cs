@@ -1,7 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Localization;
+using Microsoft.EntityFrameworkCore;
 using MiniProcurement.Data.Contexts;
 using MiniProcurement.Services.Concretes;
 using MiniProcurement.Services.Interfaces;
+using System.Globalization;
 
 namespace MiniProcurement.Extensions
 {
@@ -28,6 +30,27 @@ namespace MiniProcurement.Extensions
             });
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            services.AddLocalization();
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                var supportedCultures = new List<CultureInfo>
+                {
+                    new CultureInfo("en-US"),
+                    new CultureInfo("zh-Hant")
+                };
+
+                options.DefaultRequestCulture = new RequestCulture(culture: "zh-Hant", uiCulture: "zh-Hant");
+                options.SupportedCultures = supportedCultures;
+                options.SupportedUICultures = supportedCultures;
+                options.RequestCultureProviders = new List<IRequestCultureProvider>
+                {
+                    new AcceptLanguageHeaderRequestCultureProvider()
+                };
+                //options.RequestCultureProviders.Clear();
+
+            });
+
             return services;
         }
     }

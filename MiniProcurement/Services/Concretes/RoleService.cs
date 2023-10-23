@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using MiniProcurement.Data.Contexts;
 using MiniProcurement.Data.Contracts.Role;
 using MiniProcurement.Data.Entities;
+using MiniProcurement.Exceptions;
+using MiniProcurement.Resources.Localization;
 using MiniProcurement.Services.Interfaces;
 
 namespace MiniProcurement.Services.Concretes
@@ -11,11 +14,13 @@ namespace MiniProcurement.Services.Concretes
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IStringLocalizer<ExceptionLoc> _localizer;
 
-        public RoleService(ApplicationDbContext context, IMapper mapper)
+        public RoleService(ApplicationDbContext context, IMapper mapper, IStringLocalizer<ExceptionLoc> localizer)
         {
             _context = context;
             _mapper = mapper;
+            _localizer = localizer;
         }
 
         public async Task<IEnumerable<GetRoleDto>> GetAllRoles()
@@ -27,7 +32,7 @@ namespace MiniProcurement.Services.Concretes
 
         public async Task<GetRoleDto> GetRoleById(int id)
         {
-            var role = await _context.Roles.FindAsync(id) ?? throw new Exception("Role not found. Please provide a valid id");
+            var role = await _context.Roles.FindAsync(id) ?? throw new NotFoundException(_localizer["RoleNotFound"]);
             var mappedRole = _mapper.Map<GetRoleDto>(role);
             return mappedRole;
         }
@@ -41,14 +46,14 @@ namespace MiniProcurement.Services.Concretes
 
         public async Task UpdateRole(int id, string roleName)
         {
-            var role = await _context.Roles.FindAsync(id) ?? throw new Exception("Role not found. Please provide a valid id");
+            var role = await _context.Roles.FindAsync(id) ?? throw new NotFoundException(_localizer["RoleNotFound"]);
             role.Name = roleName;
             await _context.SaveChangesAsync();
         }
 
         public async Task DeleteRole(int id)
         {
-            var role = await _context.Roles.FindAsync(id) ?? throw new Exception("Role not found. Please provide a valid id");
+            var role = await _context.Roles.FindAsync(id) ?? throw new NotFoundException(_localizer["RoleNotFound"]);
             _context.Roles.Remove(role);
             await _context.SaveChangesAsync();
         }
