@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using MiniProcurement.Data.Contexts;
-using MiniProcurement.Data.Contracts.Department;
 using MiniProcurement.Data.Contracts.InvoiceRequest;
 using MiniProcurement.Data.Entities;
 using MiniProcurement.Data.Enumerations;
@@ -51,10 +50,11 @@ namespace MiniProcurement.Services.Concretes
                                         ?? throw new Exception("Invoice not found. Please provide a valid id");
             var item = _mapper.Map<InvoiceRequestItem>(createInvoiceItemDto);
             _context.InvoiceRequestItems.Add(item);
-            if(invoice.InvoiceRequestItems == null)
+            if (invoice.InvoiceRequestItems == null)
             {
                 invoice.InvoiceRequestItems = new List<InvoiceRequestItem> { item };
-            } else
+            }
+            else
             {
                 invoice.InvoiceRequestItems.Add(item);
             }
@@ -141,7 +141,7 @@ namespace MiniProcurement.Services.Concretes
             var invoiceRequest = await _context.InvoiceRequests
                                              .Include(inv => inv.InvoiceRequestItems)
                                              .FirstOrDefaultAsync(inv => inv.DocumentId == id)
-                                             ?? throw new Exception("Invoice not found. Please provide a valid id");                     
+                                             ?? throw new Exception("Invoice not found. Please provide a valid id");
             _context.InvoiceRequests.Remove(invoiceRequest);
         }
 

@@ -2,8 +2,8 @@
 
 namespace MiniProcurement.Data.Profiles
 {
-    public class InvoiceProfile: Profile
+    public class InvoiceProfile : Profile
     {
-       
+
     }
 }

@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using MiniProcurement.Data.Contexts;
-using MiniProcurement.Data.Contracts.InvoiceRequest;
 using MiniProcurement.Data.Contracts.PurchaseRequest;
 using MiniProcurement.Data.Entities;
 using MiniProcurement.Services.Interfaces;

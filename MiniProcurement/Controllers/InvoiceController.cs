@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MiniProcurement.Data.Contracts.Department;
 using MiniProcurement.Data.Contracts.InvoiceRequest;
-using MiniProcurement.Services.Concretes;
 using MiniProcurement.Services.Interfaces;
 
 namespace MiniProcurement.Controllers
