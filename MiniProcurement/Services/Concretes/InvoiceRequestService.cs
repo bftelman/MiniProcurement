@@ -27,10 +27,12 @@ namespace MiniProcurement.Services.Concretes
 
         public async Task CreateInvoiceRequest(CreateInvoiceDto createInvoiceDto)
         {
-            var user = await _context.Users.Include(u => u.Roles).FirstOrDefaultAsync(u => u.Id == createInvoiceDto.CreatedById)
+            var user = await _context.Users
+                .Include(u => u.Roles)
+                .FirstOrDefaultAsync(u => u.Id == createInvoiceDto.CreatedById)
                            ?? throw new NotFoundException(_localizer["UserNotFound"]);
 
-            if (user.Roles != null && user.Roles.Any(r => r.Name == "USER_SUPPLY"))
+            if (user.Roles.Any(r => r.Name == "USER_SUPPLY"))
             {
                 var document = _mapper.Map<Document>(createInvoiceDto);
 
@@ -52,19 +54,27 @@ namespace MiniProcurement.Services.Concretes
         {
             var invoice = await _context.InvoiceRequests
                                         .Include(inv => inv.InvoiceRequestItems)
+                                        .ThenInclude(inv => inv.PurchaseRequestItem)
                                         .FirstOrDefaultAsync(item => item.DocumentId == id)
                                         ?? throw new NotFoundException(_localizer["InvNotFound"]);
+
             var item = _mapper.Map<InvoiceRequestItem>(createInvoiceItemDto);
-            _context.InvoiceRequestItems.Add(item);
-            if (invoice.InvoiceRequestItems == null)
-            {
-                invoice.InvoiceRequestItems = new List<InvoiceRequestItem> { item };
-            }
-            else
+
+            var prItem = await _context.PurchaseRequestItems.FindAsync(createInvoiceItemDto.ItemId);
+
+            if (invoice.InvoiceRequestItems is [])
             {
                 invoice.InvoiceRequestItems.Add(item);
             }
+            else
+            {
+                var firstItem = invoice.InvoiceRequestItems.First();
 
+                if (firstItem.PurchaseRequestItem.PurchaseRequestId == prItem.PurchaseRequestId)
+                    invoice.InvoiceRequestItems.Add(item);
+
+                else throw new Exception("Added items should be from the same purchase request!");
+            }
 
             await _context.SaveChangesAsync();
         }
@@ -83,23 +93,21 @@ namespace MiniProcurement.Services.Concretes
 
             foreach (var item in invoiceRequest.InvoiceRequestItems)
             {
-                var correspondingPurchaseItem = purchaseRequest.PurchaseRequestItems.FirstOrDefault(p => p.Id == item.ItemId);
+                var correspondingPurchaseItem = purchaseRequest.PurchaseRequestItems.FirstOrDefault(p => p.Id == item.PurchaseRequestItemId)
+                                                                                    ?? throw new NotFoundException(_localizer["PrInvNotFound"]);
 
-                if (correspondingPurchaseItem == null)
-                {
-                    throw new NotFoundException(_localizer["PrInvNotFound"]);
-                }
+                var orderedQuantity = await _context.InvoiceRequestItems
+                    .Where(invItem => invItem.PurchaseRequestItemId == item.PurchaseRequestItemId)
+                    .SumAsync(invItem=> invItem.Quantity);
 
-                var remainingQuantity = correspondingPurchaseItem.Quantity - item.Quantity;
+                var amount = correspondingPurchaseItem.Quantity - orderedQuantity;
 
-                if (remainingQuantity < 0)
+                if (amount < 0)
                 {
                     throw new Exception(_localizer["NotEnoughItems"]);
                 }
 
-                correspondingPurchaseItem.Quantity = remainingQuantity;
-
-                if (remainingQuantity == 0)
+                if (amount == 0)
                 {
                     correspondingPurchaseItem.ItemStatus = ItemStatus.Complete;
                 }
@@ -121,33 +129,29 @@ namespace MiniProcurement.Services.Concretes
 
         public async Task UpdateInvoiceItem(int id, int itemId, UpdateInvoiceItemDto updateInvoiceItemDto)
         {
-            var invoiceRequest = await _context.InvoiceRequests
-                                              .Include(inv => inv.InvoiceRequestItems)
-                                              .FirstOrDefaultAsync(inv => inv.DocumentId == id)
-                                              ?? throw new NotFoundException(_localizer["InvNotFound"]);
-            var item = invoiceRequest.InvoiceRequestItems.FirstOrDefault(item => item.Id == itemId)
-                                                         ?? throw new NotFoundException(_localizer["InvItemNotFound"]);
+            var item = await _context.InvoiceRequestItems.Where(item => item.Id == itemId).FirstOrDefaultAsync()
+                                                          ?? throw new NotFoundException(_localizer["InvItemNotFound"]);
+
             _mapper.Map(updateInvoiceItemDto, item);
             await _context.SaveChangesAsync();
         }
 
         public async Task DeleteInvoiceItem(int id, int itemId)
         {
-            var invoiceRequest = await _context.InvoiceRequests
-                                             .Include(inv => inv.InvoiceRequestItems)
-                                             .FirstOrDefaultAsync(inv => inv.DocumentId == id)
-                                             ?? throw new NotFoundException(_localizer["InvNotFound"]);
-            var item = invoiceRequest.InvoiceRequestItems.FirstOrDefault(item => item.Id == itemId)
-                                                         ?? throw new NotFoundException(_localizer["InvItemNotFound"]);
+            var item = await _context.InvoiceRequestItems.Where(item => item.Id == itemId).FirstOrDefaultAsync()
+                                                        ?? throw new NotFoundException(_localizer["InvItemNotFound"]);
+
+
             _context.InvoiceRequestItems.Remove(item);
+            await _context.SaveChangesAsync();
         }
 
         public async Task DeleteInvoice(int id)
         {
             var invoiceRequest = await _context.InvoiceRequests
-                                             .Include(inv => inv.InvoiceRequestItems)
                                              .FirstOrDefaultAsync(inv => inv.DocumentId == id)
                                              ?? throw new NotFoundException(_localizer["InvNotFound"]);
+
             _context.InvoiceRequests.Remove(invoiceRequest);
         }
 

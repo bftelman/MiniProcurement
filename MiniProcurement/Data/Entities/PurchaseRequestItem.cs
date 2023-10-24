@@ -12,5 +12,6 @@ namespace MiniProcurement.Data.Entities
         public ItemStatus ItemStatus { get; set; } = ItemStatus.Unused;
         public int? PurchaseRequestId { get; set; }
         public PurchaseRequest? PurchaseRequest { get; set; }
+        public ICollection<InvoiceRequestItem>? InvoiceRequestItems { get; set; }
     }
 }

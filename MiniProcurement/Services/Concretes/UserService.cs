@@ -55,6 +55,7 @@ namespace MiniProcurement.Services.Concretes
             var unmappedUser = await _context.Users.Include(u => u.Roles)
                                                    .SingleOrDefaultAsync(u => u.Id == id)
                                                    ?? throw new NotFoundException(_localizer["UserNotFound"]);
+
             var user = _mapper.Map<GetUserDto>(unmappedUser);
             return user;
         }
@@ -71,14 +72,10 @@ namespace MiniProcurement.Services.Concretes
                 throw new ResourceExistsException(_localizer["UserHasRole"]);
             }
 
-            var role = await _context.Roles.FirstOrDefaultAsync(r => r.Name == assignRoleToUserDto.Name);
+            var role = await _context.Roles.FirstOrDefaultAsync(r => r.Name == assignRoleToUserDto.Name)
+                ?? throw new NotFoundException(_localizer["RoleNotFound"]);
 
-            if (role is null)
-            {
-                throw new NotFoundException(_localizer["RoleNotFound"]);
-            }
-
-            user.Roles!.Add(role);
+            user.Roles.Add(role);
 
             await _context.SaveChangesAsync();
         }

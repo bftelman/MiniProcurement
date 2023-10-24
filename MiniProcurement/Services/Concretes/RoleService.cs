@@ -40,7 +40,9 @@ namespace MiniProcurement.Services.Concretes
         public async Task CreateRole(string roleName)
         {
             var role = new Role { Name = roleName };
-            _context.Roles.Add(role);
+
+            if (await _context.Roles.AnyAsync(r => r.Name == roleName)) throw new ResourceExistsException("Role already exists. Please add another role");
+            else _context.Roles.Add(role);
             await _context.SaveChangesAsync();
         }
 
