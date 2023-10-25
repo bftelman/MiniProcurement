@@ -1,10 +1,10 @@
 ﻿namespace MiniProcurement.Exceptions
 {
-    public class ResourceExistsException: Exception
+    public class ResourceExistsException : Exception
     {
-        public ResourceExistsException(string message): base(message)
+        public ResourceExistsException(string message) : base(message)
         {
-            
+
         }
     }
 }

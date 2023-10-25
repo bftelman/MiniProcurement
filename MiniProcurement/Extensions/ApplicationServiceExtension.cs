@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Localization;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using MiniProcurement.Data.Contexts;
 using MiniProcurement.Services.Concretes;
 using MiniProcurement.Services.Interfaces;
 using System.Globalization;
+using System.Text;
 
 namespace MiniProcurement.Extensions
 {
@@ -23,6 +26,8 @@ namespace MiniProcurement.Extensions
             services.AddScoped<IDepartmentService, DepartmentService>();
             services.AddScoped<IPurchaseRequestService, PurchaseRequestService>();
             services.AddScoped<IInvoiceRequestService, InvoiceRequestService>();
+            services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
 
             services.AddDbContext<ApplicationDbContext>(options =>
             {
@@ -47,9 +52,19 @@ namespace MiniProcurement.Extensions
                 {
                     new AcceptLanguageHeaderRequestCultureProvider()
                 };
-                //options.RequestCultureProviders.Clear();
-
             });
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["TokenKey"])),
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                    };
+                });
 
             return services;
         }

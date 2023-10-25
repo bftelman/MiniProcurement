@@ -98,7 +98,7 @@ namespace MiniProcurement.Services.Concretes
 
                 var orderedQuantity = await _context.InvoiceRequestItems
                     .Where(invItem => invItem.PurchaseRequestItemId == item.PurchaseRequestItemId)
-                    .SumAsync(invItem=> invItem.Quantity);
+                    .SumAsync(invItem => invItem.Quantity);
 
                 var amount = correspondingPurchaseItem.Quantity - orderedQuantity;
 

@@ -37,7 +37,7 @@ namespace MiniProcurement.Middleware
                 await context.Response.WriteAsync(ex.Message);
 
             }
-            catch(ResourceExistsException ex)
+            catch (ResourceExistsException ex)
             {
                 logger.LogError(ex, ex.Message);
                 context.Response.ContentType = "text/plain";

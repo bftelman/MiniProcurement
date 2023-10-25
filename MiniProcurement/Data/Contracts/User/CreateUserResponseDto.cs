@@ -1,4 +1,10 @@
 ﻿namespace MiniProcurement.Data.Contracts.User
 {
-    public record CreateUserResponseDto(int Id, string FullName, List<string> Roles, int DepartmentId);
+    public class CreateUserResponseDto
+    {
+        public int Id { get; set; }
+        public required string FullName { get; set; }
+        public int? DepartmentId { get; set; }
+        public required string Token { get; set; }
+    }
 }

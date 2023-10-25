@@ -16,7 +16,7 @@ namespace MiniProcurement.Services.Concretes
         private readonly IMapper _mapper;
         private readonly IStringLocalizer<ExceptionLoc> _localizer;
 
-        public UserService(ApplicationDbContext context, IMapper mapper, IStringLocalizer<Resources.Localization.ExceptionLoc> localizer)
+        public UserService(ApplicationDbContext context, IMapper mapper, IStringLocalizer<ExceptionLoc> localizer)
         {
             _context = context;
             _mapper = mapper;
