@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MiniProcurement.Data.Contracts.Department;
+using MiniProcurement.Data.Entities;
 using MiniProcurement.Services.Interfaces;
 
 namespace MiniProcurement.Controllers
 {
+    [Authorize]
     public class DepartmentController : ApplicationController
     {
 
@@ -12,6 +15,7 @@ namespace MiniProcurement.Controllers
         public DepartmentController(IDepartmentService departmentService)
         {
             this._departmentService = departmentService;
+
         }
 
         [HttpGet]
@@ -21,10 +25,11 @@ namespace MiniProcurement.Controllers
             return Ok(deps);
         }
 
+        [Authorize(Roles = "MANAGER")]
         [HttpPost]
         public async Task<IActionResult> CreateDepartment([FromBody] CreateDepartmentDto createDepartmentDto)
         {
-            await _departmentService.CreateDepartment(createDepartmentDto);
+            await _departmentService.CreateDepartment(User, createDepartmentDto);
             return Ok();
         }
 
@@ -35,6 +40,7 @@ namespace MiniProcurement.Controllers
             return Ok(department);
         }
 
+        [Authorize(Roles = "MANAGER")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDepartmentById([FromRoute] int id)
         {
@@ -42,6 +48,7 @@ namespace MiniProcurement.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "MANAGER")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateDepartment([FromRoute] int id, [FromBody] UpdateDepartmentDto updateDepartmentDto)
         {

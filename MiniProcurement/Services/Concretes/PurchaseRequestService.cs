@@ -26,26 +26,14 @@ namespace MiniProcurement.Services.Concretes
 
         public async Task CreatePurchaseRequest(CreatePurchaseRequestDto createPurchaseRequestDto)
         {
-            var user = await _context.Users
-                .Include(u => u.Roles)
-                .FirstOrDefaultAsync(u => u.Id == createPurchaseRequestDto.CreatedById)
-                                     ?? throw new NotFoundException(_localizer["UserNotFound"]);
+            var document = _mapper.Map<Document>(createPurchaseRequestDto);
 
-            if (user.Roles.Any(r => r.Name == "USER_DEMAND"))
-            {
-                var document = _mapper.Map<Document>(createPurchaseRequestDto);
+            var purchaseRequest = _mapper.Map<PurchaseRequest>(createPurchaseRequestDto);
+            purchaseRequest.Document = document;
 
-                var purchaseRequest = _mapper.Map<PurchaseRequest>(createPurchaseRequestDto);
-                purchaseRequest.Document = document;
+            _context.PurchaseRequests.Add(purchaseRequest);
 
-                _context.PurchaseRequests.Add(purchaseRequest);
-
-                await _context.SaveChangesAsync();
-            }
-            else
-            {
-                throw new NotAuthorizedException(_localizer["NoPrRights"]);
-            }
+            await _context.SaveChangesAsync();
         }
 
         public async Task<GetPurchaseRequestDto> GetPurchaseRequestById(int id)

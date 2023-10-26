@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MiniProcurement.Data.Contracts.InvoiceRequest;
 using MiniProcurement.Services.Interfaces;
 
 namespace MiniProcurement.Controllers
 {
+    [Authorize(Roles = "USER_SUPPLY")]
     public class InvoiceController : ApplicationController
     {
         private readonly IInvoiceRequestService _invoiceRequestService;

@@ -18,12 +18,15 @@ namespace MiniProcurement.Services.Concretes
         {
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.NameId, user.UserName),
+                new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.Name, user.UserName),
+                new Claim(JwtRegisteredClaimNames.GivenName, user.FullName)
+
             };
 
             foreach (var role in user.Roles)
             {
-                claims.Add(new Claim(ClaimTypes.Role, role.Name));
+                claims.Add(new Claim(ClaimsIdentity.DefaultRoleClaimType, role.Name));
             }
 
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
@@ -35,7 +38,7 @@ namespace MiniProcurement.Services.Concretes
                 SigningCredentials = creds,
                 IssuedAt = DateTime.Now,
                 Issuer = "localhost:telman",
-                Audience = "localhost:emil"
+                Audience = "MiniProcurementApp"
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();

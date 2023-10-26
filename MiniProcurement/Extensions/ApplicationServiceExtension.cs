@@ -63,8 +63,12 @@ namespace MiniProcurement.Extensions
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["TokenKey"])),
                         ValidateIssuer = true,
                         ValidateAudience = true,
+                        ValidIssuer = "localhost:telman",
+                        ValidAudience = "MiniProcurementApp",
                     };
                 });
+
+            services.AddHttpContextAccessor();
 
             return services;
         }

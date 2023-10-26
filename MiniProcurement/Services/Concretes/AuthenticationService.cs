@@ -44,7 +44,19 @@ namespace MiniProcurement.Services.Concretes
                 PasswordSalt = hmac.Key,
             };
 
-            user.Roles = new List<Role> { new Role { Name = "BASIC_USER" } };
+            var basicRole = await _context.Roles.FirstOrDefaultAsync(r => r.Name == "BASIC_USER");
+
+            if (basicRole == null)
+            {
+                user.Roles = new List<Role>
+                {
+                    new Role {Name = "BASIC_USER"}
+                };
+            }
+            else
+            {
+                user.Roles.Add(basicRole);
+            }
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();

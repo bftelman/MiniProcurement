@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MiniProcurement.Data.Contracts.PurchaseRequest;
 using MiniProcurement.Services.Interfaces;
 
 namespace MiniProcurement.Controllers
 {
+    [Authorize(Roles = "USER_DEMAND")]
     public class PurchaseRequestController : ApplicationController
     {
         private IPurchaseRequestService _purchaseRequestService;

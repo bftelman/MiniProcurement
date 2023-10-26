@@ -1,4 +1,5 @@
 ﻿using MiniProcurement.Data.Contracts.User;
+using MiniProcurement.Data.Entities;
 
 namespace MiniProcurement.Services.Interfaces
 {
@@ -10,6 +11,8 @@ namespace MiniProcurement.Services.Interfaces
         Task DeleteUser(int id);
         Task<IEnumerable<GetUserDto>> GetAllUsersAsync();
         Task<GetUserDto> GetUserById(int id);
+        Task<User> GetUserByIdRaw(int id);
+
         Task UpdateUserName(UpdateNameDto updateNameDto, int id);
     }
 }

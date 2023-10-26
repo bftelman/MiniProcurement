@@ -15,13 +15,16 @@ namespace MiniProcurement.Services.Concretes
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
         private readonly IStringLocalizer<ExceptionLoc> _localizer;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
-        public DepartmentService(ApplicationDbContext context, IMapper mapper, IStringLocalizer<ExceptionLoc> localizer)
+        public DepartmentService(ApplicationDbContext context, IMapper mapper, IStringLocalizer<ExceptionLoc> localizer,
+            IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _mapper = mapper;
             _localizer = localizer;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<IEnumerable<GetDepartmentDto>> GetAllDepartments()
@@ -38,41 +41,36 @@ namespace MiniProcurement.Services.Concretes
             return mappedDep;
         }
 
-        public async Task CreateDepartment(CreateDepartmentDto createUserDepartmentDto)
+        public async Task CreateDepartment(User user, CreateDepartmentDto createUserDepartmentDto)
         {
+
             var department = _mapper.Map<Department>(createUserDepartmentDto);
-            var user = await _context.Users.Include(u => u.Roles)
-                .SingleOrDefaultAsync(u => u.Id == department.ManagerUserId) ?? throw new NotFoundException(_localizer["UserNotFound"]);
-
-            if (user.Roles.Any(r => r.Name == "MANAGER"))
-            {
-                department.Users = new List<User> { user };
-                _context.Departments.Add(department);
-                await _context.SaveChangesAsync();
-            }
-            else
-            {
-                throw new NotAuthorizedException(_localizer["NoManagerRights"]);
-            }
-
-
+            department.ManagerUserId = user.Id;
+            department.Users = new List<User> { user };
+            _context.Departments.Add(department);
+            await _context.SaveChangesAsync();
         }
+
 
         public async Task UpdateDepartment(int id, UpdateDepartmentDto updateDepartmentDto)
         {
+
             var department = await _context.Departments.FindAsync(id) ?? throw new NotFoundException(_localizer["DepartmentNotFound"]);
-            _mapper.Map(updateDepartmentDto, department);
+            var user = await _context.Users.Include(u => u.Roles).FirstOrDefaultAsync(u => u.Id == updateDepartmentDto.ManagerId)
+                        ?? throw new NotFoundException("User not found please provide a valid id");
+
+            if (user.Roles != null && user.Roles.Any(r => r.Name == "MANAGER")) _mapper.Map(updateDepartmentDto, department);
+            else throw new NotAuthorizedException(_localizer["NoManagerRights"]);
             await _context.SaveChangesAsync();
+
         }
 
         public async Task DeleteDepartment(int id)
         {
-            var department = await _context.Departments.FindAsync(id);
-            if (department != null)
-            {
-                _context.Departments.Remove(department);
-                await _context.SaveChangesAsync();
-            }
+            var department = await _context.Departments.FindAsync(id) ?? throw new NotFoundException(_localizer["DepartmentNotFound"]);
+
+            _context.Departments.Remove(department);
+            await _context.SaveChangesAsync();
         }
     }
 }

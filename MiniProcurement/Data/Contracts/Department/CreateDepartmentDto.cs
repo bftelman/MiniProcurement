@@ -1,4 +1,4 @@
 ﻿namespace MiniProcurement.Data.Contracts.Department
 {
-    public record CreateDepartmentDto(string Name, int ManagerUserId);
+    public record CreateDepartmentDto(string Name);
 }

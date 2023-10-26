@@ -13,6 +13,8 @@ app.UseRequestLocalization(locOptions.Value);
 
 app.UseMiddleware<ExceptionMiddleware>();
 
+app.UseMiddleware<AuthorizationMiddleware>();
+
 
 if (app.Environment.IsDevelopment())
 {

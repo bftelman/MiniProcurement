@@ -60,6 +60,15 @@ namespace MiniProcurement.Services.Concretes
             return user;
         }
 
+        public async Task<User> GetUserByIdRaw(int id)
+        {
+            var user = await _context.Users.Include(u => u.Roles)
+                                                   .SingleOrDefaultAsync(u => u.Id == id)
+                                                   ?? throw new NotFoundException(_localizer["UserNotFound"]);
+            return user;
+        }
+
+
         public async Task AssignRole(AssignRoleToUserDto assignRoleToUserDto, int id)
         {
             var user = await _context.Users.Include(u => u.Roles)
