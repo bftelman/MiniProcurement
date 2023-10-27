@@ -2,14 +2,13 @@
 using MiniProcurement.Data.Contracts.User;
 using MiniProcurement.Data.Entities;
 
-namespace MiniProcurement.Data.Profiles
+namespace MiniProcurement.Data.Profiles;
+
+public class UserProfile : Profile
 {
-    public class UserProfile : Profile
+    public UserProfile()
     {
-        public UserProfile()
-        {
-            CreateMap<User, GetUserDto>()
-                .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => src.Roles!.Select(r => r.Name)));
-        }
+        CreateMap<User, GetUserDto>()
+            .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => src.Roles!.Select(r => r.Name)));
     }
 }

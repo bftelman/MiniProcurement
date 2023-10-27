@@ -22,6 +22,35 @@ namespace MiniProcurement.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("MiniProcurement.Data.Entities.Approval", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DocumentId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("HasApproved")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DocumentId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Approval");
+                });
+
             modelBuilder.Entity("MiniProcurement.Data.Entities.Department", b =>
                 {
                     b.Property<int>("Id")
@@ -64,6 +93,9 @@ namespace MiniProcurement.Data.Migrations
                     b.Property<string>("DocumentNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DocumentStatus")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -238,6 +270,25 @@ namespace MiniProcurement.Data.Migrations
                     b.ToTable("RoleUser");
                 });
 
+            modelBuilder.Entity("MiniProcurement.Data.Entities.Approval", b =>
+                {
+                    b.HasOne("MiniProcurement.Data.Entities.Document", "Document")
+                        .WithMany("Approvals")
+                        .HasForeignKey("DocumentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MiniProcurement.Data.Entities.User", "User")
+                        .WithMany("Approvals")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Document");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("MiniProcurement.Data.Entities.Department", b =>
                 {
                     b.HasOne("MiniProcurement.Data.Entities.User", "Manager")
@@ -341,6 +392,8 @@ namespace MiniProcurement.Data.Migrations
 
             modelBuilder.Entity("MiniProcurement.Data.Entities.Document", b =>
                 {
+                    b.Navigation("Approvals");
+
                     b.Navigation("InvoiceRequest");
 
                     b.Navigation("PurchaseRequest");
@@ -363,6 +416,8 @@ namespace MiniProcurement.Data.Migrations
 
             modelBuilder.Entity("MiniProcurement.Data.Entities.User", b =>
                 {
+                    b.Navigation("Approvals");
+
                     b.Navigation("Documents");
                 });
 #pragma warning restore 612, 618

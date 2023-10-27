@@ -1,6 +1,5 @@
-﻿namespace MiniProcurement.Resources.Localization
+﻿namespace MiniProcurement.Resources.Localization;
+
+public class ExceptionLoc
 {
-    public class ExceptionLoc
-    {
-    }
 }

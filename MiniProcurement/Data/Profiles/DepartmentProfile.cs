@@ -2,15 +2,15 @@
 using MiniProcurement.Data.Contracts.Department;
 using MiniProcurement.Data.Entities;
 
-namespace MiniProcurement.Data.Profiles
+namespace MiniProcurement.Data.Profiles;
+
+public class DepartmentProfile : Profile
 {
-    public class DepartmentProfile : Profile
+    public DepartmentProfile()
     {
-        public DepartmentProfile()
-        {
-            CreateMap<CreateDepartmentDto, Department>();
-            CreateMap<Department, GetDepartmentDto>().ForMember(dest => dest.Users, opt => opt.MapFrom(src => src.Users!.Select(u => u.FullName)));
-            CreateMap<UpdateDepartmentDto, Department>();
-        }
+        CreateMap<CreateDepartmentDto, Department>();
+        CreateMap<Department, GetDepartmentDto>().ForMember(dest => dest.Users,
+            opt => opt.MapFrom(src => src.Users!.Select(u => u.FullName)));
+        CreateMap<UpdateDepartmentDto, Department>();
     }
 }

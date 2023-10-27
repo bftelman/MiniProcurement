@@ -1,11 +1,10 @@
 ﻿using MiniProcurement.Data.Enumerations;
 
-namespace MiniProcurement.Data.Contracts.InvoiceRequest
+namespace MiniProcurement.Data.Contracts.InvoiceRequest;
+
+public class CreateInvoiceItemDto
 {
-    public class CreateInvoiceItemDto
-    {
-        public int ItemId { get; set; }
-        public int Quantity { get; set; }
-        public UnitOfMeasure UnitOfMeasure { get; set; }
-    }
+    public int ItemId { get; set; }
+    public int Quantity { get; set; }
+    public UnitOfMeasure UnitOfMeasure { get; set; }
 }

@@ -1,9 +1,8 @@
 ﻿using MiniProcurement.Data.Entities;
 
-namespace MiniProcurement.Services.Interfaces
+namespace MiniProcurement.Services.Interfaces;
+
+public interface ITokenService
 {
-    public interface ITokenService
-    {
-        string CreateToken(User user);
-    }
+    string CreateToken(User user);
 }

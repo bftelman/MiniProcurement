@@ -1,4 +1,3 @@
-﻿namespace MiniProcurement.Data.Contracts.Department
-{
-    public record CreateDepartmentDto(string Name);
-}
+﻿namespace MiniProcurement.Data.Contracts.Department;
+
+public record CreateDepartmentDto(string Name);

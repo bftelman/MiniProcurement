@@ -1,57 +1,54 @@
 ﻿using MiniProcurement.Exceptions;
 
-namespace MiniProcurement.Middleware
+namespace MiniProcurement.Middleware;
+
+public class ExceptionMiddleware
 {
-    public class ExceptionMiddleware
+    private readonly IHostEnvironment env;
+    private readonly ILogger<ExceptionMiddleware> logger;
+    private readonly RequestDelegate next;
+
+    public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger,
+        IHostEnvironment env)
     {
-        private readonly RequestDelegate next;
-        private readonly ILogger<ExceptionMiddleware> logger;
-        private readonly IHostEnvironment env;
+        this.next = next;
+        this.logger = logger;
+        this.env = env;
+    }
 
-        public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger,
-            IHostEnvironment env)
+    public async Task InvokeAsync(HttpContext context)
+    {
+        try
         {
-            this.next = next;
-            this.logger = logger;
-            this.env = env;
+            await next(context);
         }
-
-        public async Task InvokeAsync(HttpContext context)
+        catch (NotFoundException ex)
         {
-            try
-            {
-                await next(context);
-            }
-            catch (NotFoundException ex)
-            {
-                logger.LogError(ex, ex.Message);
-                context.Response.ContentType = "text/plain";
-                context.Response.StatusCode = 404;
-                await context.Response.WriteAsync(ex.Message);
-            }
-            catch (NotAuthorizedException ex)
-            {
-                logger.LogError(ex, ex.Message);
-                context.Response.ContentType = "text/plain";
-                context.Response.StatusCode = 403;
-                await context.Response.WriteAsync(ex.Message);
-
-            }
-            catch (ResourceExistsException ex)
-            {
-                logger.LogError(ex, ex.Message);
-                context.Response.ContentType = "text/plain";
-                context.Response.StatusCode = 409;
-                await context.Response.WriteAsync(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, ex.Message);
-                context.Response.ContentType = "text/plain";
-                context.Response.StatusCode = 500;
-                await context.Response.WriteAsync("Internal server error");
-            }
+            logger.LogError(ex, ex.Message);
+            context.Response.ContentType = "text/plain";
+            context.Response.StatusCode = 404;
+            await context.Response.WriteAsync(ex.Message);
         }
-
+        catch (NotAuthorizedException ex)
+        {
+            logger.LogError(ex, ex.Message);
+            context.Response.ContentType = "text/plain";
+            context.Response.StatusCode = 403;
+            await context.Response.WriteAsync(ex.Message);
+        }
+        catch (ResourceExistsException ex)
+        {
+            logger.LogError(ex, ex.Message);
+            context.Response.ContentType = "text/plain";
+            context.Response.StatusCode = 409;
+            await context.Response.WriteAsync(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, ex.Message);
+            context.Response.ContentType = "text/plain";
+            context.Response.StatusCode = 500;
+            await context.Response.WriteAsync("Internal server error");
+        }
     }
 }

@@ -1,12 +1,11 @@
 ﻿using System.Security.Claims;
 
-namespace MiniProcurement.Extensions
+namespace MiniProcurement.Extensions;
+
+public static class ClaimsPrincipalExtensions
 {
-    public static class ClaimsPrincipalExtensions
+    public static string GetUsername(this ClaimsPrincipal user)
     {
-        public static string GetUsername(this ClaimsPrincipal user)
-        {
-            return user.FindFirst(ClaimTypes.NameIdentifier).Value;
-        }
+        return user.FindFirst(ClaimTypes.NameIdentifier).Value;
     }
 }

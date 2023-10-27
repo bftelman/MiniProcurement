@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
 
-namespace MiniProcurement.Data.Profiles
-{
-    public class InvoiceProfile : Profile
-    {
+namespace MiniProcurement.Data.Profiles;
 
-    }
+public class InvoiceProfile : Profile
+{
 }

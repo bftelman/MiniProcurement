@@ -1,60 +1,60 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using MiniProcurement.Services.Interfaces;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using MiniProcurement.Services.Interfaces;
 
-namespace MiniProcurement.Middleware
+namespace MiniProcurement.Middleware;
+
+public class AuthorizationMiddleware
 {
-    public class AuthorizationMiddleware
+    private readonly IConfiguration _configuration;
+    private readonly ILogger<AuthorizationMiddleware> _logger;
+    private readonly RequestDelegate _next;
+
+    public AuthorizationMiddleware(RequestDelegate next, IConfiguration configuration,
+        ILogger<AuthorizationMiddleware> logger)
     {
-        private readonly RequestDelegate _next;
-        private readonly IConfiguration _configuration;
-        private readonly ILogger<AuthorizationMiddleware> _logger;
+        _next = next;
+        _configuration = configuration;
+        _logger = logger;
+    }
 
-        public AuthorizationMiddleware(RequestDelegate next, IConfiguration configuration, ILogger<AuthorizationMiddleware> logger)
+    public async Task Invoke(HttpContext context, IUserService userService)
+    {
+        var authHeader = context.Request.Headers["Authorization"].FirstOrDefault();
+
+        if (authHeader != null)
         {
-            _next = next;
-            _configuration = configuration;
-            _logger = logger;
+            var token = authHeader.Split(" ").Last();
+            await AttachUserIdToContext(context, userService, token);
         }
 
-        public async Task Invoke(HttpContext context, IUserService userService)
+        await _next(context);
+    }
+
+    private async Task AttachUserIdToContext(HttpContext context, IUserService userService, string token)
+    {
+        try
         {
-            var authHeader = context.Request.Headers["Authorization"].FirstOrDefault();
-
-            if (authHeader != null)
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(_configuration.GetValue<string>("TokenKey"));
+            tokenHandler.ValidateToken(token, new TokenValidationParameters
             {
-                var token = authHeader.Split(" ").Last();
-                await AttachUserIdToContext(context, userService, token);
-            }
-
-            await _next(context);
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidIssuer = "localhost:telman",
+                ValidAudience = "MiniProcurementApp",
+                ValidateIssuer = true,
+                ValidateAudience = true
+            }, out var validatedToken);
+            var jwtToken = (JwtSecurityToken)validatedToken;
+            var id = int.Parse(jwtToken.Claims.First(x => x.Type == "nameid").Value);
+            var user = await userService.GetUserByIdRaw(id);
+            context.Items.Add("User", user);
         }
-
-        private async Task AttachUserIdToContext(HttpContext context, IUserService userService, string token)
+        catch (Exception ex)
         {
-            try
-            {
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.UTF8.GetBytes(_configuration.GetValue<string>("TokenKey"));
-                tokenHandler.ValidateToken(token, new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidIssuer = "localhost:telman",
-                    ValidAudience = "MiniProcurementApp",
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                }, out SecurityToken validatedToken);
-                var jwtToken = (JwtSecurityToken)validatedToken;
-                var id = int.Parse(jwtToken.Claims.First(x => x.Type == "nameid").Value);
-                var user = await userService.GetUserByIdRaw(id);
-                context.Items.Add("User", user);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-            }
+            _logger.LogError(ex, ex.Message);
         }
     }
 }

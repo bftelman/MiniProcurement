@@ -1,4 +1,3 @@
-﻿namespace MiniProcurement.Data.Contracts.User
-{
-    public record UpdateNameDto(string FullName);
-}
+﻿namespace MiniProcurement.Data.Contracts.User;
+
+public record UpdateNameDto(string FullName);

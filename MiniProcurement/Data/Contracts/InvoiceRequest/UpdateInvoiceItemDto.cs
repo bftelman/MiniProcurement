@@ -1,7 +1,6 @@
-﻿namespace MiniProcurement.Data.Contracts.InvoiceRequest
+﻿namespace MiniProcurement.Data.Contracts.InvoiceRequest;
+
+public class UpdateInvoiceItemDto
 {
-    public class UpdateInvoiceItemDto
-    {
-        public int Quantity { get; set; }
-    }
+    public int Quantity { get; set; }
 }

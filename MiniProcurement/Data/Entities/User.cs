@@ -1,4 +1,5 @@
 ﻿namespace MiniProcurement.Data.Entities;
+
 public class User
 {
     public int Id { get; set; }
@@ -10,6 +11,5 @@ public class User
     public int? DepartmentId { get; set; }
     public Department? Department { get; set; }
     public List<Document>? Documents { get; set; }
-
+    public List<Approval>? Approvals { get; set; }
 }
-
