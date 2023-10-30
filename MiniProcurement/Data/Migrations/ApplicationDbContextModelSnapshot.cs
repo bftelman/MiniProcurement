@@ -48,7 +48,7 @@ namespace MiniProcurement.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Approval");
+                    b.ToTable("Approval", (string)null);
                 });
 
             modelBuilder.Entity("MiniProcurement.Data.Entities.Department", b =>
@@ -71,7 +71,7 @@ namespace MiniProcurement.Data.Migrations
 
                     b.HasIndex("ManagerUserId");
 
-                    b.ToTable("Departments");
+                    b.ToTable("Departments", (string)null);
                 });
 
             modelBuilder.Entity("MiniProcurement.Data.Entities.Document", b =>
@@ -101,7 +101,7 @@ namespace MiniProcurement.Data.Migrations
 
                     b.HasIndex("CreatedById");
 
-                    b.ToTable("Documents");
+                    b.ToTable("Documents", (string)null);
                 });
 
             modelBuilder.Entity("MiniProcurement.Data.Entities.InvoiceRequest", b =>
@@ -119,7 +119,7 @@ namespace MiniProcurement.Data.Migrations
 
                     b.HasKey("DocumentId");
 
-                    b.ToTable("InvoiceRequests");
+                    b.ToTable("InvoiceRequests", (string)null);
                 });
 
             modelBuilder.Entity("MiniProcurement.Data.Entities.InvoiceRequestItem", b =>
@@ -148,7 +148,7 @@ namespace MiniProcurement.Data.Migrations
 
                     b.HasIndex("PurchaseRequestItemId");
 
-                    b.ToTable("InvoiceRequestItems");
+                    b.ToTable("InvoiceRequestItems", (string)null);
                 });
 
             modelBuilder.Entity("MiniProcurement.Data.Entities.PurchaseRequest", b =>
@@ -165,7 +165,7 @@ namespace MiniProcurement.Data.Migrations
 
                     b.HasKey("DocumentId");
 
-                    b.ToTable("PurchaseRequests");
+                    b.ToTable("PurchaseRequests", (string)null);
                 });
 
             modelBuilder.Entity("MiniProcurement.Data.Entities.PurchaseRequestItem", b =>
@@ -199,7 +199,7 @@ namespace MiniProcurement.Data.Migrations
 
                     b.HasIndex("PurchaseRequestId");
 
-                    b.ToTable("PurchaseRequestItems");
+                    b.ToTable("PurchaseRequestItems", (string)null);
                 });
 
             modelBuilder.Entity("MiniProcurement.Data.Entities.Role", b =>
@@ -217,7 +217,7 @@ namespace MiniProcurement.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("MiniProcurement.Data.Entities.User", b =>
@@ -252,7 +252,7 @@ namespace MiniProcurement.Data.Migrations
 
                     b.HasIndex("DepartmentId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("RoleUser", b =>
@@ -267,7 +267,7 @@ namespace MiniProcurement.Data.Migrations
 
                     b.HasIndex("UsersId");
 
-                    b.ToTable("RoleUser");
+                    b.ToTable("RoleUser", (string)null);
                 });
 
             modelBuilder.Entity("MiniProcurement.Data.Entities.Approval", b =>

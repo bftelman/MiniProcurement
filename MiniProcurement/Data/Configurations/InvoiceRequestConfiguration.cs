@@ -13,6 +13,8 @@ public class InvoiceRequestConfiguration : IEntityTypeConfiguration<InvoiceReque
         builder.Property(inv => inv.DocumentId)
             .ValueGeneratedNever();
 
-        builder.Property(inv => inv.PaymentCardNumber).HasMaxLength(16).IsRequired();
+        builder.Property(inv => inv.PaymentCardNumber)
+            .HasMaxLength(16)
+            .IsRequired();
     }
 }

@@ -14,10 +14,10 @@ public class ApprovalConfiguration : IEntityTypeConfiguration<Approval>
             .HasForeignKey(a => a.DocumentId)
             .OnDelete(DeleteBehavior.Cascade);
 
-            builder
-                .HasOne(a => a.User)
-                .WithMany(d => d.Approvals)
-                .HasForeignKey(a => a.UserId)
+        builder
+            .HasOne(a => a.User)
+            .WithMany(d => d.Approvals)
+            .HasForeignKey(a => a.UserId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

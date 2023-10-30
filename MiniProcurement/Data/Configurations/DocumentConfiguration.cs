@@ -8,7 +8,8 @@ public class DocumentConfiguration : IEntityTypeConfiguration<Document>
 {
     public void Configure(EntityTypeBuilder<Document> builder)
     {
-        builder.Property(docbase => docbase.DocumentNumber).IsRequired();
+        builder.Property(docbase => docbase.DocumentNumber)
+            .IsRequired();
         
         builder
             .HasOne(docbase => docbase.PurchaseRequest)
